@@ -2,7 +2,9 @@ package com.example.useapi.maxmind;
 
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
+import com.maxmind.geoip2.model.AsnResponse;
 import com.maxmind.geoip2.model.CityResponse;
+import com.maxmind.geoip2.model.CountryResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -36,8 +38,8 @@ public class IpController {
         return ResponseEntity.ok(ipLocationInfo);
     }
 
-    @GetMapping("/ip2")
-    public ResponseEntity<?> getIpInfo2(HttpServletRequest request) throws IOException, GeoIp2Exception {
+    @GetMapping("/example/city")
+    public ResponseEntity<?> getIpInfoFromCityDB(HttpServletRequest request) throws IOException, GeoIp2Exception {
         String ip = "127.0.0.1";
 
         ClassPathResource resource = new ClassPathResource("data/GeoLite2-City.mmdb");
@@ -45,6 +47,32 @@ public class IpController {
 
         InetAddress ipAddress = InetAddress.getByName(ip);
         CityResponse response = databaseReader.city(ipAddress);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/example/country")
+    public ResponseEntity<?> getIpInfoFromCountryDB(HttpServletRequest request) throws IOException, GeoIp2Exception {
+        String ip = "127.0.0.1";
+
+        ClassPathResource resource = new ClassPathResource("data/GeoLite2-Country.mmdb");
+        DatabaseReader databaseReader = new DatabaseReader.Builder(resource.getFile()).build();
+
+        InetAddress ipAddress = InetAddress.getByName(ip);
+        CountryResponse response = databaseReader.country(ipAddress);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/example/asn")
+    public ResponseEntity<?> getIpInfoFromASNDB(HttpServletRequest request) throws IOException, GeoIp2Exception {
+        String ip = "127.0.0.1";
+
+        ClassPathResource resource = new ClassPathResource("data/GeoLite2-ASN.mmdb");
+        DatabaseReader databaseReader = new DatabaseReader.Builder(resource.getFile()).build();
+
+        InetAddress ipAddress = InetAddress.getByName(ip);
+        AsnResponse response = databaseReader.asn(ipAddress);
 
         return ResponseEntity.ok(response);
     }
